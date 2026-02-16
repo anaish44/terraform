@@ -1,7 +1,7 @@
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
-  tags = merge(var.common_tags, { Name = var.project_name })
+  tags                 = merge(var.common_tags, { Name = var.project_name })
 }
 
 data "aws_availability_zones" "available" {}
@@ -11,7 +11,7 @@ resource "aws_subnet" "subnets" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index}.0/24"
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  tags = merge(var.common_tags, { Name = "subnet-${count.index}" })
+  tags              = merge(var.common_tags, { Name = "subnet-${count.index}" })
 }
 
 resource "aws_instance" "app" {
@@ -24,7 +24,7 @@ resource "aws_instance" "app" {
 }
 
 resource "aws_ebs_volume" "extra_disk" {
-  count = 4 # 2 instances * 2 disques
+  count             = 4 # 2 instances * 2 disques
   availability_zone = aws_instance.app[floor(count.index / 2)].availability_zone
   size              = 8
   type              = var.disk_type
