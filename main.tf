@@ -28,6 +28,7 @@ resource "aws_ebs_volume" "extra_disk" {
   availability_zone = aws_instance.app[floor(count.index / 2)].availability_zone
   size              = 8
   type              = var.disk_type
+  encrypted         = true
   tags              = var.common_tags
 }
 
@@ -41,4 +42,23 @@ resource "aws_volume_attachment" "ebs_att" {
 resource "aws_s3_bucket" "docs" {
   bucket = "${var.project_name}-documentation-storage-2024"
   tags   = var.common_tags
+}
+
+resource "aws_s3_bucket_public_access_block" "docs_block" {
+  bucket = aws_s3_bucket.docs.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "docs_encrypt" {
+  bucket = aws_s3_bucket.docs.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }

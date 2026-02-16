@@ -1,6 +1,9 @@
 name: Terraform CI
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-validate:
     runs-on: ubuntu-latest
