@@ -24,7 +24,7 @@ resource "aws_instance" "app" {
 }
 
 resource "aws_ebs_volume" "extra_disk" {
-  count             = 4 * 2 disques
+  count = 4 # 2 instances * 2 disques
   availability_zone = aws_instance.app[floor(count.index / 2)].availability_zone
   size              = 8
   type              = var.disk_type
